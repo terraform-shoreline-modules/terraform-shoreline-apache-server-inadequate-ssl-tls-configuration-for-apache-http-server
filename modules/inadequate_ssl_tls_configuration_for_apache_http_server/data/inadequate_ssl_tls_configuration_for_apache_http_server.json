@@ -1,0 +1,134 @@
+{
+  "name": "inadequate_ssl_tls_configuration_for_apache_http_server",
+  "description": "This incident type refers to a security vulnerability in the SSL/TLS configuration of the Apache HTTP Server, which can leave the server and its users vulnerable to attacks. The SSL/TLS configuration is responsible for encrypting the communication between the server and its clients, and if it is not configured properly, it can be exploited by hackers to intercept or modify sensitive data. This type of incident requires immediate attention from software engineers to ensure that the SSL/TLS configuration is properly configured to prevent any potential security threats.",
+  "params": [
+    {
+      "name": "PATH_TO_CERTIFICATE",
+      "value": ""
+    },
+    {
+      "name": "SERVER_ADDRESS",
+      "value": ""
+    },
+    {
+      "name": "PATH_TO_CONFIG_FILE",
+      "value": ""
+    },
+    {
+      "name": "CIPHER_LIST",
+      "value": ""
+    },
+    {
+      "name": "PORT",
+      "value": ""
+    },
+    {
+      "name": "PATH_TO_ERROR_LOG",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Inadequate SSL/TLS Configuration for Apache HTTP Server.\nThis incident type refers to a security vulnerability in the SSL/TLS configuration of the Apache HTTP Server, which can leave the server and its users vulnerable to attacks. The SSL/TLS configuration is responsible for encrypting the communication between the server and its clients, and if it is not configured properly, it can be exploited by hackers to intercept or modify sensitive data. This type of incident requires immediate attention from software engineers to ensure that the SSL/TLS configuration is properly configured to prevent any potential security threats."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Apache version"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `httpd -v`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the SSL/TLS configuration file"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `cat ${PATH_TO_CONFIG_FILE}`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the SSL/TLS certificate"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `openssl x509 -in ${PATH_TO_CERTIFICATE} -text -noout`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the SSL/TLS protocol versions enabled"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `openssl s_client -connect ${SERVER_ADDRESS}:${PORT} -tls1_2`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the SSL/TLS cipher suites enabled"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `openssl ciphers -v '${CIPHER_LIST}'`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Apache error logs for SSL/TLS related errors"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `tail -f ${PATH_TO_ERROR_LOG}`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## The first step to remediate this incident type is to identify the specific SSL/TLS configuration vulnerabilities that exist in the Apache HTTP Server. This can be done by conducting a security audit of the server configuration and identifying any weaknesses or misconfigurations."
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_apache_security_audit()"
+    }
+  ]
+}
